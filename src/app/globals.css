@@ -2,32 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+h1 {
+  @apply text-xl font-bold md:text-2xl;
 }
 
-@media (prefers-color-scheme: dark) {
+h2 {
+  @apply text-lg font-bold md:text-xl;
+}
+
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background: 243 30% 98%;
+    --foreground: 243 61% 1%;
+    --muted: 63 38% 91%;
+    --muted-foreground: 63 3% 29%;
+    --popover: 243 30% 97%;
+    --popover-foreground: 0 0% 0%;
+    --card: 243 30% 97%;
+    --card-foreground: 0 0% 0%;
+    --border: 243 14% 92%;
+    --input: 243 14% 92%;
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 63 75% 59%;
+    --secondary-foreground: 0 0% 0%;
+    --accent: 63 75% 59%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 11 83% 21%;
+    --destructive-foreground: 11 83% 81%;
+    --ring: 243 75% 59%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    /* Add on */
+    --edit: 218 100% 56%;
+    --edit-foreground: 210 20% 98%;
+  }
+
+  .dark {
+    --background: 243 53% 3%;
+    --foreground: 243 16% 100%;
+    --muted: 63 38% 9%;
+    --muted-foreground: 63 3% 71%;
+    --popover: 243 53% 4%;
+    --popover-foreground: 0 0% 100%;
+    --card: 243 53% 4%;
+    --card-foreground: 0 0% 100%;
+    --border: 243 14% 15%;
+    --input: 243 14% 15%;
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 63 75% 59%;
+    --secondary-foreground: 0 0% 0%;
+    --accent: 63 75% 59%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 11 83% 49%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 243 75% 59%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    /* Add on */
+    --edit: 218 80% 56%;
+    --edit-foreground: 210 20% 98%;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id              String    @id
+  email           String?   @unique
+  hashedPassword  String?
+  githubId        Int?      @unique
+  googleId        String?   @unique
+  lineLoginId     String?   @unique
+  facebookLoginId String?   @unique
+  displayName     String
+  role            UserRole  @default(USER)
+  sessions        Session[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  Order           Order[]
+
+  @@index([email])
+  @@index([githubId])
+  @@index([googleId])
+  @@index([lineLoginId])
+  @@index([facebookLoginId])
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Category {
+  id       Int        @id @default(autoincrement())
+  name     String
+  parentId Int?
+  parent   Category?  @relation("ParentToChildCategories", fields: [parentId], references: [id], onDelete: Cascade)
+  children Category[] @relation("ParentToChildCategories")
+  products Product[]  @relation("CategoryToFood")
+
+  @@index([parentId])
+}
+
+model Attribute {
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  AttributesOnProducts AttributesOnProducts[]
+}
+
+model AttributesOnProducts {
+  product     Product   @relation(fields: [productId], references: [id])
+  productId   Int
+  attribute   Attribute @relation(fields: [attributeId], references: [id])
+  attributeId Int
+
+  @@id([productId, attributeId])
+}
+
+model Product {
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  categoryId           Int
+  Category             Category?              @relation("CategoryToFood", fields: [categoryId], references: [id])
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  AttributesOnProducts AttributesOnProducts[]
+  ProductImage         ProductImage[]
+  OrderItem            OrderItem[]
+
+  @@index([categoryId])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId Int
+  url       String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  DELIVERED
+  COMPLETED
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  status     OrderStatus @default(PENDING)
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date       DateTime    @db.Date()
+  OrderItem  OrderItem[]
+  totalPrice Float
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([date])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+
+  @@index([orderId])
+  @@index([productId])
+}
