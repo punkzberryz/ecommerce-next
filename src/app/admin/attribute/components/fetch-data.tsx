@@ -2,20 +2,18 @@ import { Suspense } from "react";
 import { validateRequest } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { UnauthorizedError, UnauthorizedMessageCode } from "@/lib/error";
-import { CategoryWithParentName } from "./category-action";
-import { Client } from "./client";
 import { DataTableSkeleton } from "@/components/table/data-table-skeleton";
-
+import { Client } from "./client";
+import { AttributeWithParentName } from "./attribute-action";
 export const FetchData = () => {
   return (
     <Suspense fallback={<DataTableSkeleton />}>
-      <FetchCategories />
+      <FetchAttributes />
     </Suspense>
   );
 };
-
-const FetchCategories = async () => {
-  const categoiesReq = db.category.findMany({
+const FetchAttributes = async () => {
+  const attributesReq = db.attribute.findMany({
     where: {
       parentId: {
         equals: null,
@@ -27,37 +25,36 @@ const FetchCategories = async () => {
     orderBy: {
       id: "desc",
     },
-    skip: (CATEGORIES_PAGE_ID - 1) * CATEGORIES_LIMIT,
-    take: CATEGORIES_LIMIT,
+    skip: (ATTRIBUTES_PAGE_ID - 1) * ATTRIBUTES_LIMIT,
+    take: ATTRIBUTES_LIMIT,
   });
   const userReq = validateRequest();
-  const [categoies, { user }] = await Promise.all([categoiesReq, userReq]);
+  const [attributes, { user }] = await Promise.all([attributesReq, userReq]);
   if (user?.role !== "ADMIN")
     throw new UnauthorizedError(UnauthorizedMessageCode.notAdmin);
 
-  const allCategories: CategoryWithParentName[] = [];
-  categoies.forEach((parent) => {
-    allCategories.push(parent);
-    allCategories.push(
+  const allAttributes: AttributeWithParentName[] = [];
+  attributes.forEach((parent) => {
+    allAttributes.push(parent);
+    allAttributes.push(
       ...parent.children.map((child) => ({
         ...child,
         parentName: parent.name,
       })),
     );
   });
-  const hasMore = categoies.length === CATEGORIES_LIMIT;
-
+  const hasMore = attributes.length === ATTRIBUTES_LIMIT;
   return (
     <div className="flex flex-col space-y-2">
       <Client
         initialData={{
-          categories: allCategories,
+          attributes: allAttributes,
           hasMore,
         }}
-        limit={CATEGORIES_LIMIT}
+        limit={ATTRIBUTES_LIMIT}
       />
     </div>
   );
 };
-const CATEGORIES_LIMIT = 100;
-const CATEGORIES_PAGE_ID = 1;
+const ATTRIBUTES_LIMIT = 100;
+const ATTRIBUTES_PAGE_ID = 1;

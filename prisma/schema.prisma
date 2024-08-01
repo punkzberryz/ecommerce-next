@@ -63,7 +63,12 @@ model Category {
 model Attribute {
   id                   Int                    @id @default(autoincrement())
   name                 String
+  parentId             Int?
+  parent               Attribute?             @relation("ParentToChildAttributes", fields: [parentId], references: [id], onDelete: Cascade)
+  children             Attribute[]            @relation("ParentToChildAttributes")
   AttributesOnProducts AttributesOnProducts[]
+
+  @@index([parentId])
 }
 
 model AttributesOnProducts {

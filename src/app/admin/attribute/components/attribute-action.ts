@@ -1,7 +1,7 @@
 "use server";
 
 import { catchErrorForServerActionHelper } from "@/lib/error/catch-error-action-helper";
-import { categorySchema, CategorySchema } from "./category-schema";
+import { attributeSchema, AttributeSchema } from "./attribute-schema";
 import {
   BadRequestError,
   UnauthorizedError,
@@ -9,39 +9,39 @@ import {
 } from "@/lib/error";
 import { validateRequest } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { Category } from "@prisma/client";
+import { Attribute } from "@prisma/client";
 
-export const createNewCategoryAction = async ({
+export const createNewAttributeAction = async ({
   data,
 }: {
-  data: CategorySchema;
+  data: AttributeSchema;
 }) => {
   try {
-    //validate body
-    const validatedData = categorySchema.safeParse(data);
+    // Validate body
+    const validatedData = attributeSchema.safeParse(data);
     if (!validatedData.success) {
       throw new BadRequestError();
     }
-    //validate user
+    // Validate user
     const { user } = await validateRequest();
     if (user?.role !== "ADMIN") {
       throw new UnauthorizedError(UnauthorizedMessageCode.notAdmin);
     }
-    //create new category
+    // Create new attribute
     if (data.isChild) {
       // Check if parentId is provided
       if (!data.parentId) throw new BadRequestError();
-      const parentCategory = await db.category.findUnique({
+      const parentAttribute = await db.attribute.findUnique({
         where: {
           id: parseInt(data.parentId),
         },
       });
-      if (!parentCategory) {
+      if (!parentAttribute) {
         throw new BadRequestError();
       }
     }
 
-    const category = await db.category.create({
+    const attribute = await db.attribute.create({
       data: {
         name: data.name,
         parentId:
@@ -49,46 +49,46 @@ export const createNewCategoryAction = async ({
       },
     });
 
-    return { category };
+    return { attribute };
   } catch (err) {
     const error = catchErrorForServerActionHelper(err);
     return { error };
   }
 };
 
-export const editCategoryAction = async ({
+export const editAttributeAction = async ({
   data,
   id,
 }: {
-  data: CategorySchema;
+  data: AttributeSchema;
   id: number;
 }) => {
   try {
-    //validate body
-    const validatedData = categorySchema.safeParse(data);
+    // Validate body
+    const validatedData = attributeSchema.safeParse(data);
     if (!validatedData.success || !id) {
       throw new BadRequestError();
     }
-    //validate user
+    // Validate user
     const { user } = await validateRequest();
     if (user?.role !== "ADMIN") {
       throw new UnauthorizedError(UnauthorizedMessageCode.notAdmin);
     }
+
     if (data.isChild) {
       // Check if parentId is provided
       if (!data.parentId) throw new BadRequestError();
-      const parentCategory = await db.category.findUnique({
+      const parentAttribute = await db.attribute.findUnique({
         where: {
           id: parseInt(data.parentId),
         },
       });
-      if (!parentCategory) {
+      if (!parentAttribute) {
         throw new BadRequestError();
       }
     }
-
-    //edit category
-    const category = await db.category.update({
+    // Edit attribute
+    const attribute = await db.attribute.update({
       where: {
         id,
       },
@@ -99,24 +99,24 @@ export const editCategoryAction = async ({
       },
     });
 
-    return { category };
+    return { attribute };
   } catch (err) {
     const error = catchErrorForServerActionHelper(err);
     return { error };
   }
 };
 
-export const deleteCategoryAction = async ({ id }: { id: number }) => {
+export const deleteAttributeAction = async ({ id }: { id: number }) => {
   try {
-    //validate body
+    // Validate body
     if (!id) throw new BadRequestError();
-    //validate user
+    // Validate user
     const { user } = await validateRequest();
     if (user?.role !== "ADMIN") {
       throw new UnauthorizedError(UnauthorizedMessageCode.notAdmin);
     }
-    //delete category
-    await db.category.delete({
+    // Delete attribute
+    await db.attribute.delete({
       where: {
         id,
       },
@@ -128,7 +128,7 @@ export const deleteCategoryAction = async ({ id }: { id: number }) => {
   }
 };
 
-export const getManyCategoryAction = async ({
+export const getManyAttributeAction = async ({
   pageId,
   limit,
 }: {
@@ -136,14 +136,14 @@ export const getManyCategoryAction = async ({
   pageId: number;
 }) => {
   try {
-    //validate user
+    // Validate input
     if (!pageId || !limit) {
       throw new BadRequestError();
     }
-    //validate user
+    // Validate user
     const userReq = validateRequest();
-    //get categories
-    const categoriesReq = db.category.findMany({
+    // Get attributes
+    const attributesReq = db.attribute.findMany({
       skip: (pageId - 1) * limit,
       take: limit,
       orderBy: {
@@ -153,31 +153,30 @@ export const getManyCategoryAction = async ({
         children: true,
       },
       where: {
-        parentId: {
-          equals: null,
-        },
+        parentId: { equals: null },
       },
     });
-    const [categories, { user }] = await Promise.all([categoriesReq, userReq]);
+    const [attributes, { user }] = await Promise.all([attributesReq, userReq]);
     if (!user || user.role !== "ADMIN") {
       throw new UnauthorizedError(UnauthorizedMessageCode.notAdmin);
     }
-    const allCategories: CategoryWithParentName[] = [];
-    categories.forEach((parent) => {
-      allCategories.push({ ...parent });
-      allCategories.push(
+    const allAttributes: AttributeWithParentName[] = [];
+    attributes.forEach((parent) => {
+      allAttributes.push({ ...parent });
+      allAttributes.push(
         ...parent.children.map((child) => ({
           ...child,
           parentName: parent.name,
         })),
       );
     });
-    return { categories: allCategories };
+    return { attributes: allAttributes };
   } catch (err) {
     const error = catchErrorForServerActionHelper(err);
     return { error };
   }
 };
-export interface CategoryWithParentName extends Category {
+
+export interface AttributeWithParentName extends Attribute {
   parentName?: string;
 }

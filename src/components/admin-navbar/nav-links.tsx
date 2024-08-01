@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   LayoutListIcon,
   LucideIcon,
+  MonitorCog,
 } from "lucide-react";
 import Link from "next/link";
 import { useToggleSideNav } from "./use-toggle-sidenav";
@@ -21,6 +22,7 @@ const LINKS: { href: string; title: string; icon: LucideIcon }[] = [
     title: "จัดการหมวดหมู่",
     icon: LayoutListIcon,
   },
+  { href: "/admin/attribute", title: "จัดการคุณสมบัติ", icon: MonitorCog },
   {
     href: "/",
     title: "หน้าหลักลูกค้า",

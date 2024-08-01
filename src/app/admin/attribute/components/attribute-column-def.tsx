@@ -3,30 +3,32 @@
 import { TableColumnHeader } from "@/components/table/table-column-header";
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  CategoryWithParentName,
-  deleteCategoryAction,
-} from "./category-action";
+  AttributeWithParentName,
+  deleteAttributeAction,
+} from "./attribute-action";
 import Link from "next/link";
 import {
   ColumnDeleteButton,
   ColumnEditButton,
 } from "@/components/table/column-edit-and-delete-buttons";
 
-export const categoryColumnDef: ColumnDef<CategoryWithParentName>[] = [
+export const attributeColumnDef: ColumnDef<AttributeWithParentName>[] = [
   {
     header: ({ column }) => <TableColumnHeader title="id" column={column} />,
     accessorKey: "id",
     size: 20,
     cell: ({ row }) => (
-      <Link href={`/admin/category/${row.original.id}`}>{row.original.id}</Link>
+      <Link href={`/admin/attribute/${row.original.id}`}>
+        {row.original.id}
+      </Link>
     ),
   },
   {
     accessorKey: "parentName",
-    header: "หมวดหมู่แม่",
+    header: "ชื่อหัวข้อหลัก",
     cell: ({ row }) => (
       <Link
-        href={`/admin/category/${row.original.parentId ?? row.original.id}`}
+        href={`/admin/attribute/${row.original.parentId ?? row.original.id}`}
         className={row.original.parentId ? "text-primary underline" : ""}
       >
         {row.original.parentName || "-"}
@@ -35,10 +37,10 @@ export const categoryColumnDef: ColumnDef<CategoryWithParentName>[] = [
   },
   {
     accessorKey: "name",
-    header: "ชื่อหมวดหมู่",
+    header: "ชื่อคุณสมบัติ",
     cell: ({ row }) => (
       <Link
-        href={`/admin/category/${row.original.id}`}
+        href={`/admin/attribute/${row.original.id}`}
         className={row.original.parentId ? "" : "text-primary underline"}
       >
         {row.original.name}
@@ -49,7 +51,7 @@ export const categoryColumnDef: ColumnDef<CategoryWithParentName>[] = [
     header: "แก้ไข",
     accessorKey: "edit",
     cell: ({ row }) => (
-      <ColumnEditButton href={`/admin/category/${row.original.id}`} />
+      <ColumnEditButton href={`/admin/attribute/${row.original.id}`} />
     ),
     size: 40,
   },
@@ -59,7 +61,7 @@ export const categoryColumnDef: ColumnDef<CategoryWithParentName>[] = [
     cell: ({ row }) => (
       <ColumnDeleteButton
         name={row.original.name}
-        deleteAction={() => deleteCategoryAction({ id: row.original.id })}
+        deleteAction={() => deleteAttributeAction({ id: row.original.id })}
       />
     ),
     size: 40,

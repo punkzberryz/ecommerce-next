@@ -1,9 +1,7 @@
 "use client";
-
 import { Checkbox } from "@/components/ui/checkbox";
 import { UseFormReturn } from "react-hook-form";
-import { CategorySchema } from "../../components/category-schema";
-import { Category } from "@prisma/client";
+import { Attribute, Category } from "@prisma/client";
 import { CustomSelectField } from "@/components/custom-form-fields";
 import {
   FormControl,
@@ -11,13 +9,13 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-
-export const ParentCategorySelectField = ({
+import { AttributeSchema } from "../../components/attribute-schema";
+export const ParentAttributeSelectField = ({
   form,
-  parentCategories,
+  parentAttributes,
 }: {
-  form: UseFormReturn<CategorySchema>;
-  parentCategories: Category[];
+  form: UseFormReturn<AttributeSchema>;
+  parentAttributes: Attribute[];
 }) => {
   return (
     <div className="flex flex-col space-y-4 rounded-md border bg-primary/10 p-4 shadow-md">
@@ -35,18 +33,18 @@ export const ParentCategorySelectField = ({
                 }}
               />
             </FormControl>
-            <FormLabel>เป็นหมวดหมู่ลูก ( Sub-Category )</FormLabel>
+            <FormLabel>เป็นคุณสมบัติลูก ( Sub-Attribute )</FormLabel>
           </FormItem>
         )}
       />
       {form.watch("isChild") && (
         <CustomSelectField
           control={form.control}
-          label="เลือกหมวดหมู่หลัก"
+          label="เลือกหัวข้อคุณสมบัติ"
           name="parentId"
-          options={parentCategories.map((category) => ({
-            label: category.name,
-            value: category.id.toString(),
+          options={parentAttributes.map((attribute) => ({
+            label: attribute.name,
+            value: attribute.id.toString(),
           }))}
         />
       )}
