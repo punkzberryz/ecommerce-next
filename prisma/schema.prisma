@@ -72,9 +72,9 @@ model Attribute {
 }
 
 model AttributesOnProducts {
-  product     Product   @relation(fields: [productId], references: [id])
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId   Int
-  attribute   Attribute @relation(fields: [attributeId], references: [id])
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
   attributeId Int
 
   @@id([productId, attributeId])
@@ -83,15 +83,21 @@ model AttributesOnProducts {
 model Product {
   id                   Int                    @id @default(autoincrement())
   name                 String
+  description          String                 @db.VarChar(255)
+  price                Float
+  quantity             Int                    @default(0)
   categoryId           Int
-  Category             Category?              @relation("CategoryToFood", fields: [categoryId], references: [id])
+  isFeatured           Boolean                @default(false)
+  isArchived           Boolean                @default(false)
+  category             Category?              @relation("CategoryToFood", fields: [categoryId], references: [id])
+  AttributesOnProducts AttributesOnProducts[]
+  productImage         ProductImage[]
+  orderItem            OrderItem[]
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
-  AttributesOnProducts AttributesOnProducts[]
-  ProductImage         ProductImage[]
-  OrderItem            OrderItem[]
 
   @@index([categoryId])
+  @@index([isFeatured])
 }
 
 model ProductImage {
@@ -112,18 +118,20 @@ enum OrderStatus {
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  status     OrderStatus @default(PENDING)
-  userId     String
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date       DateTime    @db.Date()
+  id      String      @id @default(cuid())
+  status  OrderStatus @default(PENDING)
+  userId  String?
+  user    User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone   String      @default("")
+  address String      @default("")
+
   OrderItem  OrderItem[]
   totalPrice Float
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
   @@index([userId])
-  @@index([date])
+  @@index([createdAt])
 }
 
 model OrderItem {

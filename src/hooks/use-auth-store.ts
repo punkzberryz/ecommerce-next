@@ -1,3 +1,4 @@
+import { config } from "@/lib/config";
 import { User } from "lucia";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -13,7 +14,7 @@ export const useAuthStore = create<UserStore>()(
       setUser: (user) => set({ user }),
     }),
     {
-      name: "ecommerce-auth-store",
+      name: `${config.projectName}-auth-store`,
       partialize: (state) => ({
         ...state.user,
       }),

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CroissantIcon,
   HomeIcon,
   LayoutDashboard,
   LayoutListIcon,
@@ -23,6 +24,7 @@ const LINKS: { href: string; title: string; icon: LucideIcon }[] = [
     icon: LayoutListIcon,
   },
   { href: "/admin/attribute", title: "จัดการคุณสมบัติ", icon: MonitorCog },
+  { href: "/admin/product", title: "จัดการสินค้า", icon: CroissantIcon },
   {
     href: "/",
     title: "หน้าหลักลูกค้า",

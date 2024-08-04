@@ -15,7 +15,7 @@ export const FetchData = () => {
 };
 
 const FetchCategories = async () => {
-  const categoiesReq = db.category.findMany({
+  const categoriesReq = db.category.findMany({
     where: {
       parentId: {
         equals: null,
@@ -31,12 +31,12 @@ const FetchCategories = async () => {
     take: CATEGORIES_LIMIT,
   });
   const userReq = validateRequest();
-  const [categoies, { user }] = await Promise.all([categoiesReq, userReq]);
+  const [categories, { user }] = await Promise.all([categoriesReq, userReq]);
   if (user?.role !== "ADMIN")
     throw new UnauthorizedError(UnauthorizedMessageCode.notAdmin);
 
   const allCategories: CategoryWithParentName[] = [];
-  categoies.forEach((parent) => {
+  categories.forEach((parent) => {
     allCategories.push(parent);
     allCategories.push(
       ...parent.children.map((child) => ({
@@ -45,7 +45,7 @@ const FetchCategories = async () => {
       })),
     );
   });
-  const hasMore = categoies.length === CATEGORIES_LIMIT;
+  const hasMore = categories.length === CATEGORIES_LIMIT;
 
   return (
     <div className="flex flex-col space-y-2">

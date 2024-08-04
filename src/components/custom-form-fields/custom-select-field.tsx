@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { FieldTip } from "./field-tip";
+import { SelectBox } from "../ui/select-box";
 
 interface SelectOpnion {
   label: string;
@@ -45,7 +46,7 @@ export const CustomSelectField = <
       name={name}
       render={({ field }) => (
         <FormItem>
-          <div className="flex items-end space-x-2">
+          <div className="flex items-end space-x-2 pb-1">
             <FormLabel>
               {label}
               {required && (
@@ -74,6 +75,68 @@ export const CustomSelectField = <
               ))}
             </SelectContent>
           </Select>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+};
+export const CustomSelectBoxField = <
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
+  control,
+  name,
+  label,
+  options,
+  placeholder,
+  required,
+  fieldTipChildren,
+  inputPlaceholder,
+  emptyPlaceholder,
+  multiple,
+}: {
+  control: Control<TFieldValues>;
+  name: TName;
+  label: string;
+  options: SelectOpnion[];
+  placeholder?: string;
+  inputPlaceholder?: string;
+  emptyPlaceholder?: string;
+  required?: boolean;
+  fieldTipChildren?: React.ReactNode;
+  multiple?: boolean;
+}) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <div className="flex items-end space-x-2 pb-1">
+            <FormLabel>
+              {label}
+              {required && (
+                <span className="pl-1 text-xs font-semibold text-destructive">
+                  *
+                </span>
+              )}
+            </FormLabel>
+            {fieldTipChildren && <FieldTip>{fieldTipChildren}</FieldTip>}
+          </div>
+
+          <FormControl>
+            <SelectBox
+              options={options}
+              value={field.value}
+              onChange={field.onChange}
+              placeholder={placeholder}
+              inputPlaceholder={inputPlaceholder}
+              emptyPlaceholder={emptyPlaceholder}
+              multiple={multiple}
+            />
+          </FormControl>
+
           <FormMessage />
         </FormItem>
       )}

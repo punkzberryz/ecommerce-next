@@ -19,16 +19,20 @@ export const PageWrapper = ({
   title,
   links,
   children,
+  options: { hasMaxWidth } = { hasMaxWidth: false },
 }: {
   title: string;
   links: BreadcrumbLinkProps[];
   children?: React.ReactNode;
+  options?: {
+    hasMaxWidth?: boolean;
+  };
 }) => {
   return (
     <>
       <PageHeader title={title} links={links} />
       <div className="px-2.5 md:px-4">
-        <Card>
+        <Card className={hasMaxWidth ? "mx-auto max-w-4xl" : undefined}>
           {/* <Card className="mx-auto max-w-4xl"> */}
           <CardContent className="flex flex-col space-y-8 p-6">
             {children}

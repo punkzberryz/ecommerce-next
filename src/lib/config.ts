@@ -1,4 +1,5 @@
 export const config = {
+  projectName: "ecommerce-next",
   baseUrl: process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000",
   signUpAdminSecret: process.env.SIGNUP_ADMIN_SECRET,
   cloudinary: {
@@ -9,4 +10,4 @@ export const config = {
   nhsoEndPoint: "https://test.nhso.go.th/nhsoendpoint",
 };
 
-export const COOKIE_NAME = "rms-session";
+export const COOKIE_NAME = `${config.projectName}-session`;

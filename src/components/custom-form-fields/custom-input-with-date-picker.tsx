@@ -41,7 +41,7 @@ export const CustomInputWithDatePickerField = <
       name={name}
       render={({ field }) => (
         <FormItem>
-          <div className="flex items-end space-x-2">
+          <div className="flex items-end space-x-2 pb-1">
             <FormLabel>
               {label}
               {required && (

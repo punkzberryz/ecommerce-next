@@ -34,7 +34,7 @@ export const CustomInputField = <
       name={name}
       render={({ field }) => (
         <FormItem>
-          <div className="flex items-end space-x-2 overflow-x-clip">
+          <div className="flex items-end space-x-2 overflow-x-clip pb-1">
             <FormLabel className="text-nowrap">
               {label}
               {required && (
